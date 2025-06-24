@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Открытка для Веты</title>
+  <style>
+    :root {
+      --bg-color: linear-gradient(to top right, #f9d3ff, #ffe6e6);
+      --card-bg: white;
+      --text-color: #444;
+      --title-color: #e91e63;
+      --button-bg: #e91e63;
+      --button-hover: #c2185b;
+    }
+    body.dark {
+      --bg-color: linear-gradient(to top right, #2c3e50, #000000);
+      --card-bg: #1e1e1e;
+      --text-color: #f0f0f0;
+      --title-color: #ff80ab;
+      --button-bg: #ff4081;
+      --button-hover: #d81b60;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      overflow-x: hidden;
+      transition: background 0.5s;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      z-index: 2;
+      animation: popUp 1s ease;
+      transition: background 0.5s;
+    }
+    @keyframes popUp {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .card h1 {
+      font-size: 2rem;
+      color: var(--title-color);
+    }
+    .card p {
+      font-size: 1rem;
+      color: var(--text-color);
+      margin: 20px 0;
+    }
+    .btn {
+      background: var(--button-bg);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .btn:hover {
+      background: var(--button-hover);
+      transform: scale(1.05);
+    }
+    .message {
+      display: none;
+      animation: fadeIn 1s forwards;
+      margin-top: 20px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .theme-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      background: var(--button-bg);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .heart {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      transform: rotate(45deg);
+      top: 0;
+      left: 0;
+      animation: floatUp 4s linear infinite;
+      opacity: 0.8;
+      z-index: 1;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      border-radius: 50%;
+    }
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+    .heart::after {
+      left: -10px;
+      top: 0;
+    }
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: yellow;
+      z-index: 3;
+      animation: confettiFall 2s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0); }
+      100% { opacity: 0; transform: translateY(500px) rotate(720deg); }
+    }
+
+    .star {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: starFall linear infinite;
+      z-index: 0;
+    }
+    @keyframes starFall {
+      0% {
+        transform: translateY(-10px);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 20px;
+      }
+      .card {
+        width: 100%;
+        max-width: none;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .card h1 {
+        font-size: 1.7rem;
+      }
+      .card p, .btn {
+        font-size: 0.95rem;
+      }
+      .btn {
+        padding: 8px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle">🌙 Тема</button>
+  <div class="card">
+    <h1>Для Веты 💖</h1>
+    <p>Нажми кнопку ниже, чтобы открыть поздравление!</p>
+    <button class="btn" id="openBtn">Открыть</button>
+    <div class="message" id="message">
+      <p>Счастья, радости и вдохновения! Ты потрясающая! 🎉</p>
+    </div>
+  </div>
+  <script>
+    function toggleTheme(event) {
+      event.stopPropagation();
+      document.body.classList.toggle('dark');
+    }
+
+    function showMessage(event) {
+      event.stopPropagation();
+      document.getElementById('message').style.display = 'block';
+      createHearts();
+    }
+
+    function createHearts() {
+      for (let i = 0; i < 30; i++) {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.top = (Math.random() * 30 + 60) + 'vh';
+        heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+        heart.style.opacity = Math.random();
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+      }
+    }
+
+    function shootConfetti(event) {
+      for (let i = 0; i < 20; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.left = event.clientX + 'px';
+        confetti.style.top = event.clientY + 'px';
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.animationDuration = (Math.random() * 1 + 1) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 2000);
+      }
+    }
+
+    function createStars() {
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * -100 + 'vh';
+        star.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        star.style.animationDelay = Math.random() * 5 + 's';
+        document.body.appendChild(star);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+      document.getElementById('openBtn').addEventListener('click', showMessage);
+      document.body.addEventListener('click', shootConfetti);
+      createStars();
+    });
+  </script>
+</body>
+</html>
